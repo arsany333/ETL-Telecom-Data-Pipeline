@@ -1,55 +1,88 @@
-# Telecom_ETL_Project Using (SSIS)
-ETL Case Study Project for Telecom Company using SQL Server Integration Services (SSIS)
+# 📡 Telecom ETL Project Using SSIS
 
-# Description 
-A telecommunications company has approached an ETL developer to carry out a data warehousing project. 
-The company generates a CSV files everyday, containing key data related to customer activities over a given period of time.
-Below is a table showing the information stored in these CSV files.
+An **ETL Case Study** project for a telecom company using **SQL Server Integration Services (SSIS)**.
 
-![1](https://github.com/user-attachments/assets/145d1252-5dd5-484b-bd08-1c69655f0bbc)
+---
 
-# The Required Processing for the data in the files
+## 📘 Project Description
 
-![2](https://github.com/user-attachments/assets/fe37b41f-9520-44f2-9c17-e0c9f356c762)
+A telecommunications company has hired an ETL developer to build a data warehousing pipeline. The company generates **daily CSV files** containing key customer activity data. The goal is to build a robust SSIS pipeline to extract, transform, validate, and load this data into a structured data warehouse while maintaining data integrity and audit logs.
 
-# Control Flow of the program
+---
 
-![control flow](https://github.com/user-attachments/assets/ce1ff3af-82a2-40c5-8f96-35ba91e813e3)
+## 📂 Source Data Format
 
-## Steps of Control Flow 
+Each CSV file contains information such as:
 
-1. **Get Batch ID**: 
-   - For each run of the package, generate a new batch_id based on the last batch_id in the audit_dim.
-2. **Getting file name**:
-   - Iterate through the directory of the files and get the names of it.
-3. **Audit Record Insertion**:
-   - Insert a new record into the dim_audit, which includes the batch_id, package name, and file name.
-4. **Executing Data Flow**:
-   - Run the data flow task to import the file data into the database.
-   - Record necessary audit information, including rejected rows, inserted rows, and total rows processed.
-5. **Audit Record Maintenance**:
-   - Update the audit log with details on the number of processed, rejected, and inserted rows.
-6. **File Management**:
-   - Move the processed files to a different location for further management.
+![CSV Data](https://github.com/user-attachments/assets/145d1252-5dd5-484b-bd08-1c69655f0bbc)
 
-# Data Flow of the program
+---
 
-![data flow](https://github.com/user-attachments/assets/351b050c-d128-4439-b2b7-97e604ed0819)
+## 🔄 Required Data Processing
 
-## Steps of Data flow 
+The SSIS package must perform the following operations on each file:
 
-1. **Data Validation Check**: 
-   - For each csv file any rejected data record will move to table err_source_output
-2. **Adding audit_id column and counting records**:
-   - taking audit_id record from insert statment into a variable at which used here, after that count the extracted processed rows beside of the extracted error records.
-3. **Making some operations to specific columns**:
-   - by getting subscriber_id at which imsi is matched and operations as showded above
-4. **Derived Columns Creation**:
-   - Create necessary derived columns, such as `tac` and `snr`, from the `imei` column.
-5. **loading prcessed data to fact_transaction**:
-   - after making processing of the data it uploaded to the DWH as shown below in the schema.
+![Processing Steps](https://github.com/user-attachments/assets/fe37b41f-9520-44f2-9c17-e0c9f356c762)
 
-## Schema
+---
 
-![schema2](https://github.com/user-attachments/assets/305f3263-4d1a-4014-93e9-2b2fa7ab7ed4)
-  
+## 🔁 Control Flow Overview
+
+The control flow manages the overall execution of the ETL pipeline.
+
+![Control Flow](https://github.com/user-attachments/assets/ce1ff3af-82a2-40c5-8f96-35ba91e813e3)
+
+### ✅ Control Flow Steps:
+
+1. **Generate Batch ID**
+   - Generate a new `batch_id` for the current package run based on the latest value in `audit_dim`.
+
+2. **Fetch File Name**
+   - Iterate through the directory to retrieve all CSV file names.
+
+3. **Insert Audit Record**
+   - Insert a record into `dim_audit` for tracking, including batch ID, file name, and package name.
+
+4. **Execute Data Flow**
+   - Load and process the data from CSV into the database.
+   - Log the number of total, inserted, and rejected records.
+
+5. **Update Audit Log**
+   - Record the results (inserted, rejected, processed counts) in the audit log.
+
+6. **Manage Files**
+   - Move the processed files to an archive or backup location.
+
+---
+
+## 🔄 Data Flow Overview
+
+The data flow is responsible for validating, transforming, and loading the data.
+
+![Data Flow](https://github.com/user-attachments/assets/351b050c-d128-4439-b2b7-97e604ed0819)
+
+### ✅ Data Flow Steps:
+
+1. **Data Validation**
+   - Records failing validation rules are redirected to the `err_source_output` table.
+
+2. **Audit ID & Row Count**
+   - Retrieve the `audit_id` from the insert step and use it in downstream tasks.
+   - Count processed and rejected rows.
+
+3. **Column Operations**
+   - Perform necessary transformations, including matching `imsi` with `subscriber_id`.
+
+4. **Derived Columns**
+   - Derive columns like `tac` and `snr` from the `imei` field.
+
+5. **Load to Data Warehouse**
+   - Load cleaned and processed records into the `fact_transaction` table.
+
+---
+
+## 🗂️ Schema
+
+The final structure of the Data Warehouse includes:
+
+![Schema](https://github.com/user-attachments/assets/305f3263-4d1a-4014-93e9-2b2fa7ab7ed4)
